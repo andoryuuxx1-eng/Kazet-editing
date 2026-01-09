@@ -1,43 +1,105 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>K‘Z Editing</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#6a0dad">
-  <style>
-    body {
-      margin: 0;
-      background: linear-gradient(135deg, #000000, #4b0082);
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    .logo {
-      margin-top: 80px;
-      font-size: 48px;
-      font-weight: bold;
-      color: #b266ff;
-    }
-    .btn {
-      margin-top: 40px;
-      padding: 15px 25px;
-      font-size: 18px;
-      background: #6a0dad;
-      border: none;
-      border-radius: 10px;
-      color: white;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>K‘Z Editing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #000000, #4b0082);
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+  color: #b266ff;
+}
+
+.container {
+  padding: 20px;
+}
+
+img {
+  max-width: 100%;
+  margin-top: 15px;
+  border-radius: 10px;
+}
+
+button {
+  margin: 5px;
+  padding: 12px 18px;
+  background: #7a2cff;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+}
+
+input {
+  margin-top: 10px;
+}
+</style>
 </head>
 <body>
 
-  <div class="logo">K‘Z Editing</div>
-  <p>Aplikasi Editing Foto & Video HD</p>
+<h1>K‘Z Editing</h1>
+<p>Edit foto sederhana langsung dari HP</p>
 
-  <button class="btn">
-    Masuk dengan Google
-  </button>
+<div class="container">
+  <input type="file" accept="image/*" onchange="loadImage(event)">
+  <br>
+
+  <img id="preview">
+
+  <br>
+  <button onclick="grayscale()">Hitam Putih</button>
+  <button onclick="rotate()">Putar</button>
+  <button onclick="download()">Simpan</button>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script>
+let img = new Image();
+let angle = 0;
+
+function loadImage(event) {
+  img.src = URL.createObjectURL(event.target.files[0]);
+  document.getElementById("preview").src = img.src;
+}
+
+function grayscale() {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.filter = "grayscale(100%)";
+  ctx.drawImage(img, 0, 0);
+  document.getElementById("preview").src = canvas.toDataURL();
+}
+
+function rotate() {
+  angle += 90;
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = img.height;
+  canvas.height = img.width;
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(angle * Math.PI / 180);
+  ctx.drawImage(img, -img.width / 2, -img.height / 2);
+  document.getElementById("preview").src = canvas.toDataURL();
+}
+
+function download() {
+  const link = document.createElement("a");
+  link.download = "KZ-Editing.png";
+  link.href = document.getElementById("preview").src;
+  link.click();
+}
+</script>
 
 </body>
 </html>
